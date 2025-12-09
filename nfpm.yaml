@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=https://nfpm.goreleaser.com/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
+
+name: "gorge"
+arch: "amd64"
+platform: "linux"
+version: "0.7.0"
+provides:
+  - gorge
+maintainer: "dadav <dadav@protonmail.com>"
+description: |
+  Gorge is a puppet forge implementation in go.
+homepage: "https://github.com/dadav/gorge"
+license: "Apache 2.0"
+contents:
+  - src: gorge
+    dst: /usr/bin/gorge
+  - src: gorge.service
+    dst: /usr/lib/systemd/system/gorge.service
+  - src: defaults.yaml
+    dst: /etc/gorge.yaml
+    type: "config|noreplace"
