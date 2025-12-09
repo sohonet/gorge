@@ -4,7 +4,7 @@
 name: "gorge"
 arch: "amd64"
 platform: "linux"
-version: "0.7.0"
+version: "v0.7.1"
 provides:
   - gorge
 maintainer: "dadav <dadav@protonmail.com>"
