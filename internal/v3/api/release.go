@@ -367,21 +367,24 @@ func (s *ReleaseOperationsApi) GetReleases(ctx context.Context, limit int32, off
 	}
 
 	base.RawQuery = params.Encode()
-	currentInf = interface{}(base.String())
+	currentQuery := base.String()
+	currentInf = interface{}(currentQuery)
 	params.Set("offset", "0")
-	firstInf := interface{}(base.String())
+	firstInf := interface{}(currentQuery)
 
 	var nextInf interface{}
 	nextOffset := int(offset) + len(results)
 	if nextOffset < len(filtered) {
 		params.Set("offset", strconv.Itoa(nextOffset))
+		base.RawQuery = params.Encode()
 		nextInf = interface{}(base.String())
 	}
 
 	var prevInf *string
 	prevOffset := int(offset) - int(limit)
 	if prevOffset >= 0 {
-		prevStr := base.String()
+		prevStr := currentQuery
+		base.RawQuery = params.Encode()
 		prevInf = &prevStr
 	}
 
