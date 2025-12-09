@@ -164,14 +164,20 @@ func (s *FilesystemBackend) AddRelease(releaseData []byte) (*gen.Release, error)
 		return nil, err
 	}
 
+	if metadata == nil {
+		return nil, nil
+	}
+
 	// Validate metadata.Name to ensure it does not contain path separators or parent directory references
 	if strings.Contains(metadata.Name, "/") || strings.Contains(metadata.Name, "\\") || strings.Contains(metadata.Name, "..") {
-		return nil, errors.New("invalid module name")
+		log.Log.Warnf("invalid module name for: %s", metadata.Name)
+		return nil, nil
 	}
 
 	releaseSlug := fmt.Sprintf("%s-%s", metadata.Name, metadata.Version)
 	if !utils.CheckReleaseSlug(releaseSlug) {
-		return nil, errors.New("invalid release slug")
+		log.Log.Warnf("invalid release slug for %s: %s", metadata.Name, releaseSlug)
+		return nil, nil
 	}
 
 	// No need to re-read releases we know of
@@ -438,12 +444,14 @@ func ReadReleaseMetadataFromBytes(data []byte) (*model.ReleaseMetadata, string, 
 			}
 
 			if err := json.Unmarshal(jsonData.Bytes(), &releaseMetadata); err != nil {
-				return nil, readme.String(), err
+				log.Log.Warnf("failed to unmarshall metadata for: %s", header.Name)
+				return nil, readme.String(), nil
 			}
 
 			// Validate the module name
 			if !utils.CheckModuleSlug(releaseMetadata.Name) {
-				return nil, readme.String(), errors.New("invalid module name")
+				log.Log.Warnf("invalid module name for: %s", header.Name)
+				return nil, readme.String(), nil
 			}
 		case "README.md":
 			// Read the README contents
